@@ -1,7 +1,10 @@
 # SubCMedians
+Authors: Sergio Peignier, Christophe Rigotti, Anthony Rossi and Guillaume Beslon
+ 
 SubCMedians is a Subspace Clustering algorithm that extends the K-medians paradigm.
 SubCMedians is a simple hill climbing algorithm based on stochastic weighted local exploration steps.
 This median based algorithm exhibits satisfactory quality clusters when compared to well-established paradigms, while medians have still their own interests depending on the user application (robustness to noise/outliers and location optimality).
+Detailled description available in the paper "Weight-based search to find clusters around medians in subspaces" presented in the ACM SAC conference 2018.
 
 # Installation
 Dependencies :
@@ -23,3 +26,4 @@ A simple example is provided in the `script.py` file. The basic steps are stated
 	+ `N = 25 * NbExpClust`
 	+ `NbIter = 10 * SDmax * NbExpClust`
 + Compute the Subspace Clustering model `scm.fit(df)` of the dataset `df` (numpy array or pandas data frames supported)
++ Find cluster membership of dataset `df`: `scm.predict(df)`
