@@ -22,4 +22,4 @@ A simple example is provided in the `script.py` file. The basic steps are stated
 	+ `SDmax = int(D * NbExpClust)`
 	+ `N = 25 * NbExpClust`
 	+ `NbIter = 10 * SDmax * NbExpClust`
-+ Generate a Subspace Clustering model `scm.fit(Data)`
++ Compute the Subspace Clustering model `scm.fit(df)` of the dataset `df` (numpy array or pandas data frames supported)
