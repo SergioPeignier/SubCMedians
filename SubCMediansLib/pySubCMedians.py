@@ -1,11 +1,12 @@
 #!/usr/bin/python
 import C.SubCMediansWrapper_c as SubCMediansWrapper_c
-from Definitions.definitions import STD_SDmax,STD_D,STD_N,STD_THRESHOLD_CLUSTER_VALIDITY,STD_SEED,STD_OPT_DEL,STD_OPT_INS,STD_FIFO,STD_TRAIN_WITH_LATEST,STD_LAZY_HILL_CLIMBING, STD_LAMBDA,STD_ETA, POINTDESCRIPTORS, NBFEATURES, POINTWEIGHT, DIMID, POINTINDEX, STD_NbIter
+from Definitions.definitions import STD_SDmax,STD_D,STD_N,STD_THRESHOLD_CLUSTER_VALIDITY,STD_SEED,STD_OPT_DEL,STD_OPT_INS,STD_FIFO,STD_TRAIN_WITH_LATEST,STD_LAZY_HILL_CLIMBING, STD_LAMBDA,STD_ETA, POINTDESCRIPTORS, NBFEATURES, POINTWEIGHT, DIMID, POINTINDEX, STD_NbIter,DIMPOS,POINTCLASSID
 from pandas import DataFrame
 from numpy import logical_not, isnan, array, append, ndarray, generic
 from EvaluationUtil.evaluationfunctions import functional_evaluation
 from timeit import default_timer as timer
 import numpy as np
+import pandas as pd
 import sys
 class SubCMedians_customizable:
     def __init__(self,
@@ -117,6 +118,28 @@ class SubCMedians_customizable:
         raise ValueError('Invalid parameter %s for function %s.'
                          'Invalid type'
                          'Check the input table X'%(X,self._check_X_matrix_validity))
+
+    def set_subspace_model(self, model, base_weight = 1):
+        model_translation = []
+        total_size = 0
+        for i,center in enumerate(model):
+            scm_py_list = [0 for _ in xrange(POINTDESCRIPTORS)]
+            w = 0
+            for dim,dim_pos in enumerate(center):
+                if not isnan(dim_pos):
+                    scm_py_list.append([dim, base_weight, float(dim_pos)])
+                    w += 1
+            total_size += w
+            scm_py_list[POINTINDEX] = i 
+            scm_py_list[POINTWEIGHT] = w
+            model_translation.append(scm_py_list)
+        if total_size > self.SDmax:
+            raise ValueError('Invalid new model size %s for estimator %s.'
+                             'Check the size of your model and provide a smaller or equal size model'
+                             'with `SubCMedians.SDmax`.' %
+                             (total_size, self))
+        else:
+            SubCMediansWrapper_c.clone_SubCMedians_point_from_list(model_translation,self._p_subcmedians_c)
 
     def _send_array(self, x, y=None):
         """
@@ -312,7 +335,7 @@ class SubCMedians(SubCMedians_customizable):
             if not hasattr(self, name):
                 raise ValueError('Invalid parameter %s for estimator %s.'
                                  'Check the list of available parameters '
-                                 'with `KymerClust.get_params().keys()`.' %
+                                 'with `SubCMedians.get_params().keys()`.' %
                                  (name, self))
             setattr(self, name, params[name])
 
