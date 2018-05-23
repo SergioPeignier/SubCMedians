@@ -207,6 +207,7 @@ class SubCMedians_customizable:
         for cluster in model:
             for i in xrange(POINTDESCRIPTORS , len(cluster)):
                 max_dim = max(max_dim, cluster[i][DIMID])
+        max_dim = max(self.D,max_dim)
         return max_dim
 
     def _get_subspaces_candidate_centers(self, model=None):
